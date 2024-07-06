@@ -1,5 +1,6 @@
 <?php
 
+// src/Controller/ExpenseController.php
 namespace App\Controller;
 
 use App\Entity\Expense;
@@ -10,11 +11,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
+/**
+ * @Route("/expense")
+ */
 class ExpenseController extends AbstractController
 {
-    #Route("/", name="expense_index", methods={"GET"})
+    private $security;
 
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
+
+    /**
+     * @Route("/", name="expense_index", methods={"GET"})
+     */
     public function index(ExpenseRepository $expenseRepository): Response
     {
         $expenses = $expenseRepository->findAll();
@@ -28,7 +41,9 @@ class ExpenseController extends AbstractController
         ]);
     }
 
-    #Route("/expense/new", name="expense_new", methods={"GET", "POST"})
+    /**
+     * @Route("/new", name="expense_new", methods={"GET", "POST"})
+     */
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $expense = new Expense();
@@ -36,6 +51,14 @@ class ExpenseController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->security->getUser();
+            if ($user) {
+                $expense->setTenantId($user->getTenantId());
+            } else {
+                // Jeśli użytkownik nie jest zalogowany, ustaw wartość domyślną
+                $expense->setTenantId(1);
+            }
+
             $entityManager->persist($expense);
             $entityManager->flush();
 
@@ -47,8 +70,9 @@ class ExpenseController extends AbstractController
         ]);
     }
 
-    #Route("/expense/{id}/delete", name="expense_delete", methods={"POST"})
-
+    /**
+     * @Route("/{id}/delete", name="expense_delete", methods={"POST"})
+     */
     public function delete(Request $request, Expense $expense, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$expense->getId(), $request->request->get('_token'))) {
@@ -58,15 +82,19 @@ class ExpenseController extends AbstractController
 
         return $this->redirectToRoute('expense_index');
     }
-    #Route("/api/expenses", name="api_expense_index", methods={"GET"})
+
+    /**
+     * @Route("/api/expenses", name="api_expense_index", methods={"GET"})
+     */
     public function apiIndex(ExpenseRepository $expenseRepository): Response
     {
         $expenses = $expenseRepository->findAll();
         return $this->json($expenses);
     }
 
-    
-    #Route("/api/expenses", name="api_expense_new", methods={"POST"})
+    /**
+     * @Route("/api/expenses", name="api_expense_new", methods={"POST"})
+     */
     public function apiNew(Request $request, EntityManagerInterface $entityManager): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -76,10 +104,17 @@ class ExpenseController extends AbstractController
         $expense->setAmount($data['amount']);
         $expense->setDate(new \DateTime($data['date']));
 
+        $user = $this->security->getUser();
+        if ($user) {
+            $expense->setTenantId($user->getTenantId());
+        } else {
+            // Jeśli użytkownik nie jest zalogowany, ustaw wartość domyślną
+            $expense->setTenantId(1);
+        }
+
         $entityManager->persist($expense);
         $entityManager->flush();
 
         return $this->json(['status' => 'Expense added'], Response::HTTP_CREATED);
     }
 }
-
