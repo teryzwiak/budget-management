@@ -23,6 +23,9 @@ class Expense
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date = null;
 
+    #[@ORM\Column(type="integer")]
+    private $tenant_id;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -61,6 +64,16 @@ class Expense
     {
         $this->date = $date;
 
+        return $this;
+    }
+    public function getTenantId(): ?int
+    {
+        return $this->tenant_id;
+    }
+
+    public function setTenantId(int $tenant_id): self
+    {
+        $this->tenant_id = $tenant_id;
         return $this;
     }
 }

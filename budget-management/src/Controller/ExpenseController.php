@@ -62,5 +62,31 @@ class ExpenseController extends AbstractController
 
         return $this->redirectToRoute('expense_index');
     }
+    /**
+     * @Route("/api/expenses", name="api_expense_index", methods={"GET"})
+     */
+    public function apiIndex(ExpenseRepository $expenseRepository): Response
+    {
+        $expenses = $expenseRepository->findAll();
+        return $this->json($expenses);
+    }
+
+    /**
+     * @Route("/api/expenses", name="api_expense_new", methods={"POST"})
+     */
+    public function apiNew(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $expense = new Expense();
+        $expense->setCategory($data['category']);
+        $expense->setAmount($data['amount']);
+        $expense->setDate(new \DateTime($data['date']));
+
+        $entityManager->persist($expense);
+        $entityManager->flush();
+
+        return $this->json(['status' => 'Expense added'], Response::HTTP_CREATED);
+    }
 }
 
