@@ -13,9 +13,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ExpenseController extends AbstractController
 {
-    /**
-     * @Route("/", name="expense_index", methods={"GET"})
-     */
+    #Route("/", name="expense_index", methods={"GET"})
+
     public function index(ExpenseRepository $expenseRepository): Response
     {
         $expenses = $expenseRepository->findAll();
@@ -29,9 +28,7 @@ class ExpenseController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/expense/new", name="expense_new", methods={"GET", "POST"})
-     */
+    #Route("/expense/new", name="expense_new", methods={"GET", "POST"})
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $expense = new Expense();
@@ -50,9 +47,8 @@ class ExpenseController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/expense/{id}/delete", name="expense_delete", methods={"POST"})
-     */
+    #Route("/expense/{id}/delete", name="expense_delete", methods={"POST"})
+
     public function delete(Request $request, Expense $expense, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$expense->getId(), $request->request->get('_token'))) {
@@ -62,18 +58,15 @@ class ExpenseController extends AbstractController
 
         return $this->redirectToRoute('expense_index');
     }
-    /**
-     * @Route("/api/expenses", name="api_expense_index", methods={"GET"})
-     */
+    #Route("/api/expenses", name="api_expense_index", methods={"GET"})
     public function apiIndex(ExpenseRepository $expenseRepository): Response
     {
         $expenses = $expenseRepository->findAll();
         return $this->json($expenses);
     }
 
-    /**
-     * @Route("/api/expenses", name="api_expense_new", methods={"POST"})
-     */
+    
+    #Route("/api/expenses", name="api_expense_new", methods={"POST"})
     public function apiNew(Request $request, EntityManagerInterface $entityManager): Response
     {
         $data = json_decode($request->getContent(), true);

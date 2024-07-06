@@ -23,8 +23,8 @@ class Expense
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date = null;
 
-    #[@ORM\Column(type="integer")]
-    private $tenant_id;
+    #[ORM\Column]
+    private ?int $tenant_id;
 
     public function getId(): ?int
     {
