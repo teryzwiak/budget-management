@@ -15,6 +15,7 @@ class AppFixtures extends Fixture
             $expense->setCategory('Category ' . $i);
             $expense->setAmount(mt_rand(10, 1000));
             $expense->setDate(new \DateTime());
+            $expense->setTenantId(1);
 
             $manager->persist($expense);
         }

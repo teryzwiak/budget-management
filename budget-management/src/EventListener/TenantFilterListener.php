@@ -19,7 +19,7 @@ class TenantFilterListener
 
     public function onFlush(OnFlushEventArgs $args)
     {
-        $entityManager = $args->getEntityManager();
+        $entityManager = $args->getObjectManager();
         $uow = $entityManager->getUnitOfWork();
 
         foreach ($uow->getScheduledEntityInsertions() as $entity) {
@@ -30,5 +30,5 @@ class TenantFilterListener
                 }
             }
         }
-    }
+}
 }

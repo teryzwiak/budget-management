@@ -1,3 +1,29 @@
 controllers:
     resource: '../src/Controller/'
     type: annotation
+# Trasy dla kontrolera ExpenseController
+expense_index:
+    path: /expense
+    controller: App\Controller\ExpenseController::index
+    methods: GET
+
+expense_new:
+    path: /expense/new
+    controller: App\Controller\ExpenseController::new
+    methods: [GET, POST]
+
+expense_delete:
+    path: /expense/{id}/delete
+    controller: App\Controller\ExpenseController::delete
+    methods: POST
+
+# Trasy dla API
+api_expense_index:
+    path: /api/expenses
+    controller: App\Controller\ExpenseController::apiIndex
+    methods: GET
+
+api_expense_new:
+    path: /api/expenses
+    controller: App\Controller\ExpenseController::apiNew
+    methods: POST

@@ -22,6 +22,7 @@ services:
     App\EventListener\TenantFilterListener:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
-
+        arguments:
+            $security: '@security.helper'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
