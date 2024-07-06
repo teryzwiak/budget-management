@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add New Expense{% endblock %}
+
+{% block body %}
+    <h1>Add New Expense</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.category) }}
+        {{ form_row(form.amount) }}
+        {{ form_row(form.date) }}
+        <button class="btn">Save</button>
+    {{ form_end(form) }}
+{% endblock %}
